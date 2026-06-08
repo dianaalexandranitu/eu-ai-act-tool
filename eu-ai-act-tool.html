@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU AI Act — Compliance Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-muted: #8a8a8a;
+    --paper: #f7f5f0;
+    --paper-warm: #ede9e0;
+    --accent: #1a3a5c;
+    --accent-light: #e8eef5;
+    --danger: #8b2020;
+    --danger-light: #fdf0f0;
+    --warn: #7a4a00;
+    --warn-light: #fdf6e8;
+    --safe: #1a4a2a;
+    --safe-light: #edf5f0;
+    --border: rgba(26,26,26,0.12);
+    --radius: 4px;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+  }
+
+  .header-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+  }
+
+  .header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    height: 2px;
+    background: var(--paper-warm);
+    width: 100%;
+  }
+
+  .progress-bar-fill {
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .question-sub {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: white;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .option-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    min-width: 16px;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .option.selected .option-key {
+    color: var(--accent);
+  }
+
+  .option-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .option.selected .option-text {
+    color: var(--ink);
+  }
+
+  /* MULTI-SELECT NOTE */
+  .multi-note {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  /* NEXT BUTTON */
+  .btn-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-next:hover { opacity: 0.88; }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-next svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* RESULT */
+  .result-card {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .result-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .badge-prohibited { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(139,32,32,0.2); }
+  .badge-high { background: var(--warn-light); color: var(--warn); border: 1px solid rgba(122,74,0,0.2); }
+  .badge-limited { background: var(--accent-light); color: var(--accent); border: 1px solid rgba(26,58,92,0.2); }
+  .badge-minimal { background: var(--safe-light); color: var(--safe); border: 1px solid rgba(26,74,42,0.2); }
+
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .result-subtitle {
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin-bottom: 48px;
+    line-height: 1.6;
+  }
+
+  .result-section {
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .result-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ink-muted);
+    margin-bottom: 14px;
+  }
+
+  .result-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+
+  .obligation-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .obligation-list li {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .obligation-list li::before {
+    content: '—';
+    color: var(--ink-muted);
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .deadline-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--warn-light);
+    border: 1px solid rgba(122,74,0,0.15);
+    border-radius: var(--radius);
+    margin-top: 12px;
+  }
+
+  .deadline-date {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--warn);
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  .deadline-text {
+    font-size: 13px;
+    color: var(--warn);
+    line-height: 1.6;
+  }
+
+  .questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .follow-q {
+    display: flex;
+    gap: 14px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .follow-q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    min-width: 18px;
+    margin-top: 2px;
+  }
+
+  /* DOWNLOAD BUTTONS */
+  .download-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-download:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-download.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .btn-download.primary:hover { opacity: 0.88; }
+
+  .btn-restart {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-restart:hover { color: var(--ink); }
+
+  /* PROHIBITED STOP */
+  .stop-card {
+    padding: 32px;
+    background: var(--danger-light);
+    border: 1px solid rgba(139,32,32,0.2);
+    border-radius: var(--radius);
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .stop-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--danger);
+    margin-bottom: 16px;
+  }
+
+  .stop-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--danger);
+    margin-bottom: 12px;
+  }
+
+  .stop-card-text {
+    font-size: 14px;
+    color: var(--danger);
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  /* HIDDEN PRINT OUTPUT */
+  #print-content { display: none; }
+
+  @media print {
+    .header, .progress-bar-wrap, .download-row, .btn-restart { display: none !important; }
+    body { background: white; }
+    #print-content { display: block !important; }
+    .result-card { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .main { padding: 40px 20px 80px; }
+    .header { padding: 16px 20px; }
+    .question-text { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-logo">AI Act</span>
+  <div class="header-divider"></div>
+  <span class="header-sub">Compliance Assessment</span>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+</div>
+
+<div class="main" id="app"></div>
+
+<div id="print-content"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 'q1',
+    step: 'Step 1 of 6 — Prohibited practices check',
+    question: 'Does your client\'s AI system do any of the following?',
+    sub: 'Select all that apply. These fall under Article 5 of the EU AI Act.',
+    multi: true,
+    options: [
+      { key: 'a', text: 'Influences people\'s behaviour without their awareness (subliminal or manipulative techniques)' },
+      { key: 'b', text: 'Targets vulnerable groups to distort their behaviour' },
+      { key: 'c', text: 'Scores people based on their social behaviour over time (social scoring)' },
+      { key: 'd', text: 'Predicts criminal behaviour based on profiling alone' },
+      { key: 'e', text: 'Scrapes facial images to build or expand recognition databases' },
+      { key: 'f', text: 'Infers emotions in workplace or education settings' },
+      { key: 'g', text: 'Categorises people by race, religion or sexual orientation using biometrics' },
+      { key: 'h', text: 'Identifies people in real-time in publicly accessible spaces (law enforcement use)' },
+      { key: 'none', text: 'None of the above' }
+    ],
+    next: (sel) => {
+      if (sel.includes('none')) return 'q2';
+      return 'prohibited';
+    }
+  },
+  {
+    id: 'q2',
+    step: 'Step 2 of 6 — Safety component check',
+    question: 'Is the system built into a regulated product that requires third-party conformity assessment?',
+    sub: 'For example: machinery, medical devices, aviation equipment, vehicles, lifts. This is the Article 6(1) route to high-risk classification.',
+    multi: false,
+    options: [
+      { key: 'a', text: 'Yes — it is a safety component of a product covered by EU harmonisation legislation (Annex I)' },
+      { key: 'b', text: 'No' }
+    ],
+    next: (sel) => sel.includes('a') ? 'high_risk_obligations' : 'q3'
+  },
+  {
+    id: 'q3',
+    step: 'Step 3 of 6 — Use case classification',
+    question: 'Which area does the system operate in?',
+    sub: 'Select the closest match. These are the eight high-risk categories listed in Annex III.',
+    multi: false,
+    options: [
+      { key: 'a', text: 'Biometric identification, categorisation, or emotion recognition' },
+      { key: 'b', text: 'Critical infrastructure — energy, water, transport, or digital' },
+      { key: 'c', text: 'Education — access, assessment, or monitoring of students' },
+      { key: 'd', text: 'Employment — recruitment, performance monitoring, promotion, or termination' },
+      { key: 'e', text: 'Essential services — credit scoring, insurance pricing, public benefits, or emergency triage' },
+      { key: 'f', text: 'Law enforcement — risk assessment, evidence evaluation, or profiling' },
+      { key: 'g', text: 'Migration, asylum, or border control' },
+      { key: 'h', text: 'Justice system or elections' },
+      { key: 'none', text: 'None of the above' }
+    ],
+    next: (sel) => sel.includes('none') ? 'q5' : 'q4'
+  },
+  {
+    id: 'q4',
+    step: 'Step 4 of 6 — Exception check',
+    question: 'Which of the following best describes what the system actually does?',
+    sub: 'Article 6(3) provides an exception for systems that do not pose a significant risk of harm, even if they fall within an Annex III category.',
+    multi: false,
+    options: [
+      { key: 'a', text: 'It only performs a narrow procedural task' },
+      { key: 'b', text: 'It only improves the result of a previously completed human activity' },
+      { key: 'c', text: 'It detects patterns without replacing or influencing human assessment' },
+      { key: 'd', text: 'It only prepares information for a human to then decide — no profiling of individuals' },
+      { key: 'e', text: 'None of these — it directly influences outcomes or profiles individuals' }
+    ],
+    next: (sel) => sel.includes('e') ? 'high_risk_obligations' : 'q4_exception'
+  },
+  {
+    id: 'q4_exception',
+    step: 'Step 4 of 6 — Exception confirmed',
+    question: 'The Article 6(3) exception may apply.',
+    sub: 'However, your client still has documentation and registration obligations. Let\'s continue to check for transparency requirements.',
+    multi: false,
+    options: [
+      { key: 'continue', text: 'Continue to transparency check' }
+    ],
+    next: () => 'q5'
+  },
+  {
+    id: 'q5',
+    step: 'Step 5 of 6 — Role of your client',
+    question: 'In relation to this system, is your client the provider, the deployer, or both?',
+    sub: 'This determines which specific obligations apply under Articles 16–26.',
+    multi: false,
+    options: [
+      { key: 'provider', text: 'Provider — they developed the system or placed it on the market' },
+      { key: 'deployer', text: 'Deployer — they use the system in their business or service' },
+      { key: 'both', text: 'Both — they developed it and also deploy it themselves' }
+    ],
+    next: () => 'q6'
+  },
+  {
+    id: 'q6',
+    step: 'Step 6 of 6 — Transparency obligations',
+    question: 'Does the system do any of the following?',
+    sub: 'These trigger Article 50 transparency obligations regardless of the system\'s risk classification.',
+    multi: true,
+    options: [
+      { key: 'a', text: 'Interacts directly with users who may not know they are talking to an AI' },
+      { key: 'b', text: 'Generates synthetic images, audio, video, or text content' },
+      { key: 'c', text: 'Uses emotion recognition or biometric categorisation' },
+      { key: 'd', text: 'Creates or manipulates deepfakes' },
+      { key: 'none', text: 'None of the above' }
+    ],
+    next: () => 'result'
+  }
+];
+
+let answers = {};
+let currentQ = 'q1';
+let selectedOptions = [];
+
+function getQuestion(id) {
+  return QUESTIONS.find(q => q.id === id);
+}
+
+function getProgress() {
+  const order = ['q1','q2','q3','q4','q4_exception','q5','q6'];
+  const idx = order.indexOf(currentQ);
+  if (idx === -1) return 100;
+  return Math.round(((idx) / 7) * 100);
+}
+
+function render() {
+  document.getElementById('progress-fill').style.width = getProgress() + '%';
+
+  if (currentQ === 'prohibited') {
+    renderProhibited();
+    return;
+  }
+  if (currentQ === 'high_risk_obligations') {
+    answers['_classification'] = 'high_risk';
+    currentQ = 'q5';
+    render();
+    return;
+  }
+  if (currentQ === 'result') {
+    renderResult();
+    return;
+  }
+
+  const q = getQuestion(currentQ);
+  if (!q) return;
+
+  selectedOptions = answers[currentQ] || [];
+
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="question-card">
+      <div class="step-label">${q.step}</div>
+      <div class="question-text">${q.question}</div>
+      <div class="question-sub">${q.sub}</div>
+      ${q.multi ? '<div class="multi-note">You may select multiple options.</div>' : ''}
+      <div class="options" id="options-list"></div>
+      <button class="btn-next" id="btn-next" onclick="goNext()" disabled>
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  `;
+
+  const list = document.getElementById('options-list');
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (selectedOptions.includes(opt.key) ? ' selected' : '');
+    btn.innerHTML = `<span class="option-key">${opt.key}</span><span class="option-text">${opt.text}</span>`;
+    btn.onclick = () => selectOption(opt.key, q.multi, q.options);
+    list.appendChild(btn);
+  });
+
+  updateNextBtn();
+}
+
+function selectOption(key, multi, options) {
+  if (multi) {
+    if (key === 'none') {
+      selectedOptions = ['none'];
+    } else {
+      selectedOptions = selectedOptions.filter(k => k !== 'none');
+      if (selectedOptions.includes(key)) {
+        selectedOptions = selectedOptions.filter(k => k !== key);
+      } else {
+        selectedOptions.push(key);
+      }
+    }
+  } else {
+    selectedOptions = [key];
+  }
+
+  document.querySelectorAll('.option').forEach((btn, i) => {
+    btn.className = 'option' + (selectedOptions.includes(options[i].key) ? ' selected' : '');
+  });
+
+  updateNextBtn();
+}
+
+function updateNextBtn() {
+  const btn = document.getElementById('btn-next');
+  if (btn) btn.disabled = selectedOptions.length === 0;
+}
+
+function goNext() {
+  if (selectedOptions.length === 0) return;
+  answers[currentQ] = [...selectedOptions];
+  const q = getQuestion(currentQ);
+  currentQ = q.next(selectedOptions);
+  selectedOptions = [];
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderProhibited() {
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('app').innerHTML = `
+    <div class="stop-card">
+      <div class="stop-card-label">Assessment complete — Article 5</div>
+      <div class="stop-card-title">This system is prohibited.</div>
+      <div class="stop-card-text">
+        Based on your answers, this AI system falls under one or more of the prohibited practices listed in Article 5 of the EU AI Act. It cannot be placed on the market, put into service, or used in the EU.<br><br>
+        Your client must not deploy this system in its current form. Advise them to seek a fundamental redesign that removes the prohibited functionality, or to discontinue the project.
+      </div>
+      <div class="download-row">
+        <button class="btn-download primary" onclick="downloadTxt(getProhibitedText())">Download assessment</button>
+        <button class="btn-restart" onclick="restart()">Start new assessment</button>
+      </div>
+    </div>
+  `;
+}
+
+function getProhibitedText() {
+  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `EU AI ACT — COMPLIANCE ASSESSMENT
+Generated: ${date}
+
+CLASSIFICATION: PROHIBITED (Article 5)
+
+This AI system falls under one or more of the prohibited practices listed in Article 5 of the EU AI Act. It cannot be placed on the market, put into service, or used in the EU.
+
+Advise your client that this system must not be deployed in its current form. A fundamental redesign removing the prohibited functionality, or discontinuation of the project, is required.
+
+---
+Generated using the EU AI Act Compliance Assessment Tool.
+This output is for informational purposes only and does not constitute legal advice.`;
+}
+
+function getRole() {
+  const sel = answers['q5'] || [];
+  if (sel.includes('both')) return 'both';
+  if (sel.includes('provider')) return 'provider';
+  return 'deployer';
+}
+
+function getClassification() {
+  if (answers['_classification'] === 'high_risk') return 'high_risk';
+  const q3 = answers['q3'] || [];
+  const q4 = answers['q4'] || [];
+  if (q3.includes('none')) return 'check_transparency';
+  if (q4.includes('e')) return 'high_risk';
+  return 'exception';
+}
+
+function hasTransparency() {
+  const q6 = answers['q6'] || [];
+  return !q6.includes('none');
+}
+
+function renderResult() {
+  document.getElementById('progress-fill').style.width = '100%';
+  const classification = getClassification();
+  const role = getRole();
+  const transparency = hasTransparency();
+
+  let badgeClass, badgeText, titleText, subtitleText;
+  let obligations = [];
+  let deadlineHtml = '';
+  let followQuestions = [];
+
+  if (classification === 'high_risk') {
+    badgeClass = 'badge-high';
+    badgeText = 'High risk';
+    titleText = 'This is a high-risk AI system.';
+    subtitleText = 'Mandatory compliance obligations apply under Chapter III of the EU AI Act. Your client must meet these requirements before placing the system on the market or putting it into service.';
+
+    if (role === 'provider' || role === 'both') {
+      obligations.push('Establish a risk management system covering the full lifecycle of the system (Article 9)');
+      obligations.push('Implement data governance practices for training, validation, and testing data (Article 10)');
+      obligations.push('Prepare and maintain technical documentation (Article 11 + Annex IV)');
+      obligations.push('Design the system with logging capabilities for automatic recording of events (Article 12)');
+      obligations.push('Ensure transparency and provide instructions for use to deployers (Article 13)');
+      obligations.push('Build in human oversight measures so operators can monitor and intervene (Article 14)');
+      obligations.push('Ensure accuracy, robustness, and cybersecurity throughout the lifecycle (Article 15)');
+      obligations.push('Establish a quality management system (Article 17)');
+      obligations.push('Complete conformity assessment before placing on the market (Article 43)');
+      obligations.push('Register the system in the EU database before deployment (Article 49)');
+      obligations.push('Affix CE marking (Article 48)');
+      obligations.push('Set up post-market monitoring system (Article 72)');
+    }
+    if (role === 'deployer' || role === 'both') {
+      obligations.push('Use the system only in accordance with the provider\'s instructions for use (Article 26(1))');
+      obligations.push('Assign human oversight to a competent person with authority to intervene (Article 26(2))');
+      obligations.push('Maintain logs generated by the system where under your control (Article 26(5))');
+      obligations.push('Conduct a fundamental rights impact assessment if you are a public body or provide public services (Article 26(9))');
+      obligations.push('Inform individuals when they are subject to decisions made using a high-risk AI system (Article 26(11))');
+    }
+
+    deadlineHtml = `
+      <div class="deadline-box">
+        <div class="deadline-date">2 Aug 2026</div>
+        <div class="deadline-text">Full compliance obligations for high-risk AI systems enter into force. Your client must have all requirements in place by this date.</div>
+      </div>`;
+
+    const q3sel = answers['q3'] || [];
+    if (q3sel.includes('d')) {
+      followQuestions.push('Does the system make final employment decisions autonomously, or does it only produce recommendations for human review? This affects the scope of human oversight obligations under Article 14.');
+      followQuestions.push('Has your client conducted a data protection impact assessment (DPIA) under GDPR? High-risk AI systems processing employee data will likely require one.');
+      followQuestions.push('Who is responsible for maintaining the technical documentation — your client or a third-party developer? The provider obligations under Article 17 must be clearly assigned.');
+    } else if (q3sel.includes('e')) {
+      followQuestions.push('Does the system produce a credit or insurance decision, or only a recommendation? Fully automated decisions may also trigger Article 22 GDPR rights.');
+      followQuestions.push('Has your client identified a notified body for conformity assessment? This is required before market placement for Annex III point 5 systems.');
+      followQuestions.push('What data does the system use to make its assessment? Article 10 requires training data to be relevant, representative, and free of errors and biases.');
+    } else {
+      followQuestions.push('Has your client identified which conformity assessment procedure applies — internal control (Annex VI) or third-party assessment (Annex VII)?');
+      followQuestions.push('Does your client have a process for handling serious incidents and reporting them to market surveillance authorities under Article 73?');
+      followQuestions.push('Is the system already deployed or is this a new development? If already on the market, transitional provisions under Article 111 may apply.');
+    }
+
+  } else if (classification === 'exception') {
+    badgeClass = 'badge-limited';
+    badgeText = 'Limited risk — exception may apply';
+    titleText = 'The high-risk classification may not apply.';
+    subtitleText = 'Based on your answers, the Article 6(3) exception may apply, meaning this system may not be classified as high-risk despite falling within an Annex III category. However, your client still has obligations.';
+
+    obligations.push('Document the Article 6(3) exception assessment in writing before placing the system on the market (Article 6(4))');
+    obligations.push('Register the system under Article 49(2) — the simplified registration obligation applies');
+    obligations.push('Make the documentation available to national competent authorities upon request');
+    obligations.push('Monitor whether the system\'s use expands in a way that would bring it back into high-risk territory');
+
+    followQuestions.push('Can your client clearly demonstrate in writing that the system meets one of the Article 6(3) conditions? This documentation must exist before deployment.');
+    followQuestions.push('Has the intended use of the system been precisely defined? A narrow procedural task that expands in practice would lose the exception.');
+    followQuestions.push('Is there any profiling of natural persons involved? If yes, the exception does not apply regardless of the other conditions.');
+
+    deadlineHtml = `
+      <div class="deadline-box">
+        <div class="deadline-date">2 Aug 2026</div>
+        <div class="deadline-text">Even where the exception applies, documentation and registration must be in place. Verify your client is compliant by this date.</div>
+      </div>`;
+
+  } else {
+    badgeClass = 'badge-minimal';
+    badgeText = 'Minimal risk';
+    titleText = 'No mandatory high-risk obligations apply.';
+    subtitleText = 'This system does not appear to fall within the prohibited practices or high-risk categories of the EU AI Act. No mandatory compliance obligations apply beyond any applicable transparency requirements.';
+
+    obligations.push('No mandatory obligations under the AI Act for this system at present');
+    obligations.push('Consider voluntary adherence to the AI Act\'s codes of practice');
+    obligations.push('Monitor for any changes in the system\'s use case that could change its classification');
+    obligations.push('Ensure compliance with other applicable legislation — GDPR, consumer protection, sector-specific rules');
+
+    followQuestions.push('Has the intended use of the system been clearly documented? A change in use could bring the system within a high-risk category.');
+    followQuestions.push('Does the system process personal data? If so, GDPR obligations apply independently of the AI Act.');
+    followQuestions.push('Is the system a general-purpose AI model (GPAI)? If it was trained on broad data for multiple use cases, additional obligations under Articles 53–55 may apply.');
+  }
+
+  if (transparency) {
+    obligations.push('— Transparency obligations (Article 50): inform users they are interacting with an AI system; mark AI-generated content as artificially produced');
+  }
+
+  const obligationsHtml = obligations.map(o => `<li>${o.replace(/^— /, '')}</li>`).join('');
+  const followHtml = followQuestions.map((q, i) => `
+    <div class="follow-q">
+      <span class="follow-q-num">${i + 1}.</span>
+      <span>${q}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="result-card">
+      <span class="result-badge ${badgeClass}">${badgeText}</span>
+      <div class="result-title">${titleText}</div>
+      <div class="result-subtitle">${subtitleText}</div>
+
+      <div class="result-section">
+        <div class="result-section-label">Applicable obligations</div>
+        <ul class="obligation-list">${obligationsHtml}</ul>
+      </div>
+
+      ${deadlineHtml ? `<div class="result-section">
+        <div class="result-section-label">Key deadline</div>
+        ${deadlineHtml}
+      </div>` : ''}
+
+      <div class="result-section">
+        <div class="result-section-label">Questions to take back to your client</div>
+        <div class="questions-list">${followHtml}</div>
+      </div>
+
+      <div class="download-row">
+        <button class="btn-download primary" onclick="downloadPDF()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download as PDF
+        </button>
+        <button class="btn-download" onclick="downloadTxt(getFullText())">
+          Download as text
+        </button>
+        <button class="btn-restart" onclick="restart()">Start new assessment</button>
+      </div>
+    </div>
+  `;
+
+  buildPrintContent(badgeText, titleText, subtitleText, obligations, deadlineHtml, followQuestions);
+}
+
+function buildPrintContent(badge, title, subtitle, obligations, deadlineHtml, questions) {
+  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('print-content').innerHTML = `
+    <div style="font-family: Georgia, serif; max-width: 680px; margin: 0 auto; padding: 40px;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 8px;">EU AI Act — Compliance Assessment · ${date}</div>
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; margin-bottom: 24px;">${badge}</div>
+      <h1 style="font-size: 28px; margin-bottom: 8px;">${title}</h1>
+      <p style="font-size: 14px; color: #555; margin-bottom: 32px; line-height: 1.7;">${subtitle}</p>
+      <h2 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px;">Applicable obligations</h2>
+      <ul style="font-size: 14px; line-height: 1.8; color: #333; padding-left: 20px; margin-bottom: 32px;">${obligations.map(o=>`<li>${o}</li>`).join('')}</ul>
+      <h2 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px;">Questions to take back to your client</h2>
+      ${questions.map((q,i)=>`<p style="font-size: 14px; line-height: 1.7; color: #333; margin-bottom: 12px;"><strong>${i+1}.</strong> ${q}</p>`).join('')}
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 11px; color: #aaa;">This output is for informational purposes only and does not constitute legal advice.</div>
+    </div>
+  `;
+}
+
+function downloadPDF() {
+  window.print();
+}
+
+function getFullText() {
+  const classification = getClassification();
+  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const role = getRole();
+  const app = document.getElementById('app');
+  const title = app.querySelector('.result-title')?.textContent || '';
+  const subtitle = app.querySelector('.result-subtitle')?.textContent || '';
+  const badge = app.querySelector('.result-badge')?.textContent || '';
+  const obligations = [...app.querySelectorAll('.obligation-list li')].map(li => '— ' + li.textContent).join('\n');
+  const questions = [...app.querySelectorAll('.follow-q')].map((q, i) => `${i+1}. ${q.querySelector('span:last-child').textContent}`).join('\n\n');
+
+  let deadline = '';
+  const deadlineBox = app.querySelector('.deadline-box');
+  if (deadlineBox) {
+    deadline = `\nKEY DEADLINE\n${deadlineBox.querySelector('.deadline-date')?.textContent} — ${deadlineBox.querySelector('.deadline-text')?.textContent}\n`;
+  }
+
+  return `EU AI ACT — COMPLIANCE ASSESSMENT
+Generated: ${date}
+Role assessed: ${role.charAt(0).toUpperCase() + role.slice(1)}
+
+CLASSIFICATION: ${badge.toUpperCase()}
+
+${title}
+${subtitle}
+
+APPLICABLE OBLIGATIONS
+${obligations}
+${deadline}
+QUESTIONS TO TAKE BACK TO YOUR CLIENT
+${questions}
+
+---
+This output is for informational purposes only and does not constitute legal advice.`;
+}
+
+function downloadTxt(text) {
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'eu-ai-act-assessment.txt';
+  a.click();
+}
+
+function restart() {
+  answers = {};
+  currentQ = 'q1';
+  selectedOptions = [];
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+render();
+</script>
+</body>
+</html>
