@@ -779,10 +779,14 @@ function renderResult() {
       obligations.push('Inform individuals when they are subject to decisions made using a high-risk AI system (Article 26(11))');
     }
 
+    const isAnnexI = answers['q2']?.includes('a');
     deadlineHtml = `
       <div class="deadline-box">
-        <div class="deadline-date">2 Aug 2026</div>
-        <div class="deadline-text">Full compliance obligations for high-risk AI systems enter into force. Your client must have all requirements in place by this date.</div>
+        <div class="deadline-date">${isAnnexI ? '2 Aug 2027' : '2 Dec 2027'}</div>
+        <div class="deadline-text">${isAnnexI 
+          ? 'Following the Digital Omnibus agreement of May 2026, the deadline for high-risk AI systems that are safety components of Annex I regulated products has been extended to 2 August 2027.'
+          : 'Following the Digital Omnibus agreement of May 2026, the deadline for Annex III high-risk AI systems has been extended from August 2026 to 2 December 2027. However, compliance preparation should begin now — technical documentation, risk management systems, and conformity assessments take significant time to complete.'
+        }</div>
       </div>`;
 
     const q3sel = answers['q3'] || [];
@@ -817,8 +821,8 @@ function renderResult() {
 
     deadlineHtml = `
       <div class="deadline-box">
-        <div class="deadline-date">2 Aug 2026</div>
-        <div class="deadline-text">Even where the exception applies, documentation and registration must be in place. Verify your client is compliant by this date.</div>
+        <div class="deadline-date">2 Dec 2027</div>
+        <div class="deadline-text">Even where the Article 6(3) exception applies, documentation and registration obligations must be met. Note: following the Digital Omnibus agreement of May 2026, this deadline has been extended from August 2026.</div>
       </div>`;
 
   } else {
@@ -840,7 +844,7 @@ function renderResult() {
   if (transparency) {
     badgeClass = badgeClass === 'badge-minimal' ? 'badge-limited' : badgeClass;
     badgeText = badgeClass === 'badge-limited' && classification !== 'exception' ? 'Limited risk — transparency obligations apply' : badgeText;
-    obligations.push('Transparency obligations are MANDATORY under Article 50: inform users they are interacting with an AI system; mark AI-generated content as artificially produced. These apply regardless of risk classification.');
+    obligations.push('Transparency obligations are MANDATORY under Article 50: inform users they are interacting with an AI system; mark AI-generated content as artificially produced. These apply regardless of risk classification. Deadline: 2 December 2026 (unchanged by the Digital Omnibus).');
   }
 
   const obligationsHtml = obligations.map(o => `<li>${o.replace(/^— /, '')}</li>`).join('');
