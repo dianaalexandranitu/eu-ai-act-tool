@@ -499,7 +499,7 @@ const QUESTIONS = [
     id: 'q2',
     step: 'Step 2 of 6 — Safety component check',
     question: 'Is the system built into a regulated product that requires third-party conformity assessment?',
-    sub: 'For example: machinery, medical devices, aviation equipment, vehicles, lifts. This is the Article 6(1) route to high-risk classification.',
+    sub: 'Annex I covers: machinery, medical devices, in vitro diagnostic medical devices, civil aviation equipment, motor vehicles, agricultural and forestry vehicles, marine equipment, rail systems, lifts, equipment for potentially explosive atmospheres, radio equipment, pressure equipment, recreational craft, cableways, and appliances burning gaseous fuels. This is the Article 6(1) route to high-risk classification.',
     multi: false,
     options: [
       { key: 'a', text: 'Yes — it is a safety component of a product covered by EU harmonisation legislation (Annex I)' },
@@ -838,7 +838,9 @@ function renderResult() {
   }
 
   if (transparency) {
-    obligations.push('— Transparency obligations (Article 50): inform users they are interacting with an AI system; mark AI-generated content as artificially produced');
+    badgeClass = badgeClass === 'badge-minimal' ? 'badge-limited' : badgeClass;
+    badgeText = badgeClass === 'badge-limited' && classification !== 'exception' ? 'Limited risk — transparency obligations apply' : badgeText;
+    obligations.push('Transparency obligations are MANDATORY under Article 50: inform users they are interacting with an AI system; mark AI-generated content as artificially produced. These apply regardless of risk classification.');
   }
 
   const obligationsHtml = obligations.map(o => `<li>${o.replace(/^— /, '')}</li>`).join('');
